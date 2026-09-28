@@ -1,0 +1,27 @@
+# Verifiable builds (SEP-55): on a tag, builds each contract in GitHub
+# Actions, attests the wasm hash and publishes it as a release asset.
+# Stellar Expert then shows the contract as built from this repository.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  id-token: write
+  contents: write
+  attestations: write
+
+jobs:
+  release:
+    strategy:
+      matrix:
+        package: [kyc-registry, property-token, primary-sale, dividends]
+    uses: stellar-expert/soroban-build-workflow/.github/workflows/release.yml@main
+    with:
+      release_name: ${{ github.ref_name }}-${{ matrix.package }}
+      release_description: "Kastor Finance on Soroban: ${{ matrix.package }}"
+      relative_path: "."
+      package: ${{ matrix.package }}
+    secrets:
+      release_token: ${{ secrets.GITHUB_TOKEN }}
