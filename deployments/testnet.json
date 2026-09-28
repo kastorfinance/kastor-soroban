@@ -1,0 +1,27 @@
+{
+  "network": "testnet",
+  "deployed_at": "2026-09-28T17:10:07Z",
+  "cli": "stellar 28.1.0 (c0f4d0da891bbf214c08b8c5035ae6db80e9a3bd)",
+  "test_dollar": {
+    "asset": "KUSD:GD3HYO3TD35S3I3EKIGOMDKBJACWNPNAJJEOUDQN4KARNMMGV7J2QUWC",
+    "contract": "CDMJO5WPIUFI3REU74LQ3PU5AR2JR445ONZPJX4GAZCWXIOYFDM2IFUU"
+  },
+  "contracts": {
+    "kyc_registry": {
+      "id": "CBRI2H3BIZSCFUWXUECTBE4SY7PZ74HCD7ISQR6QGANYFGACZDBSRPLL",
+      "wasm_sha256": "80c498f138fa1388df547cbf80040e01cd7b1f44deb1863bb3a319ee90f26d7e"
+    },
+    "property_token": {
+      "id": "CBOYC65K67NWCNB52VJSYDFBRRF6FP2Z6FTSLSPSXUKC55ZOXSHGQNGO",
+      "wasm_sha256": "303a234ca507c276c201b081f3204e2891568d54e0dced48d3874eee687ead92"
+    },
+    "primary_sale": {
+      "id": "CD575RI4T4ZX5UQ334Z3FVYNOI32JAXTVQBWORE5CS5X3OXWP637QYIA",
+      "wasm_sha256": "8cb60efd0fd77a43df3ad6847411267b23c3995c6152af334db13e5f9210d3e6"
+    },
+    "dividends": {
+      "id": "CAXWNRKX4EMWSOQLZWSWMGTIVSHZHTL7TLQVM3U2Y6YU45WWXL32HNPW",
+      "wasm_sha256": "2879e83fe454a79da9fa661038a883acbd28443259d5dd4c6f63a0cdaf9019c7"
+    }
+  }
+}
