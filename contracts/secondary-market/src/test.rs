@@ -386,3 +386,26 @@ fn listing_requires_the_seller_signature() {
         .try_list(&s.seller, &s.token.address, &1, &PRICE, &500)
         .is_err());
 }
+
+#[test]
+fn expired_approval_blocks_the_purchase() {
+    let s = setup();
+    // The seller approves the market until ledger 200 but lists until 500.
+    s.token.approve(&s.seller, &s.market.address, &10, &200);
+    let id = s
+        .market
+        .list(&s.seller, &s.token.address, &10, &PRICE, &500);
+    s.env.ledger().set_sequence_number(200);
+    s.market.buy(&s.buyer, &id, &1); // last ledger of the approval
+    s.env.ledger().set_sequence_number(201);
+    assert_eq!(s.token.allowance(&s.seller, &s.market.address), 0);
+    assert_eq!(
+        s.market.listing(&id).unwrap().units,
+        9,
+        "listing still live"
+    );
+    assert_eq!(
+        s.market.try_buy(&s.buyer, &id, &1),
+        Err(Ok(err(Error::AllowanceTooLow)))
+    );
+}
