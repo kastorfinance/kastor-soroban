@@ -14,6 +14,7 @@ Kastor's production contracts are written in Solidity and were developed between
 | [`property-token`](contracts/property-token) | `KastorToken` (ERC-1155) | One SEP-41 token per property, `decimals = 0` (1 unit = 1 fraction). Supply is minted once. Sender and recipient must be verified. Pause, restricted mode with transfer agents, lockable IPFS metadata URI. |
 | [`primary-sale`](contracts/primary-sale) | `KastorEscrowMultiple`, `KastorEscrowV2` | The investor pays USDC into escrow and units are reserved. After the holding period the operator settles (USDC to the treasury, units to the investor) or refunds. The buyer can self-refund if the operator never acts. |
 | [`dividends`](contracts/dividends) | `KastorRoyalties` | The operator allocates rental income, either as explicit amounts or pro-rata to token balances, funding it in the same call. Each holder claims once per allocation. |
+| [`secondary-market`](contracts/secondary-market) | none (new) | The secondary market from Kastor's whitepaper. A verified holder lists units at a price; another verified investor buys all or part of them in USDC. Non-custodial: units stay with the seller until sold, so listed units keep earning rental income. 1 % fee to the treasury, capped at 10 %. |
 
 ```mermaid
 flowchart LR
@@ -26,6 +27,9 @@ flowchart LR
   OPS -- allocate_pro_rata (USDC) --> DIV[dividends]
   DIV -- balance / total_supply --> TOK
   INV -- claim --> DIV
+  INV -- list / buy (USDC) --> MKT[secondary-market]
+  MKT -- is_verified --> REG
+  MKT -- transfer_from seller to buyer --> TOK
 ```
 
 ## Testnet deployment
@@ -52,13 +56,14 @@ Testnet is reset periodically. After a reset, run the script again and the ids a
 Requires Rust 1.98.1 (pinned in `rust-toolchain.toml`) and the [Stellar CLI](https://developers.stellar.org/docs/tools/cli) 28 or later.
 
 ```bash
-cargo test                                      # 41 unit and cross-contract tests
+cargo test                                      # 59 unit and cross-contract tests
 cargo clippy --all-targets -- -D warnings
 stellar contract build                          # wasm in target/wasm32v1-none/release
 ./scripts/deploy-testnet.sh                     # deploy + full demo on testnet (needs jq)
+RELEASE=v0.2.0 ./scripts/deploy-testnet.sh      # same, from the attested release WASM
 ```
 
-Every push runs format, clippy, tests and the wasm build ([`ci.yml`](.github/workflows/ci.yml)). Tagging `v*` publishes attested builds per [SEP-55](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0055.md) ([`release.yml`](.github/workflows/release.yml)).
+Every push runs format, clippy, tests with a coverage floor of 80 % of lines, and the wasm build ([`ci.yml`](.github/workflows/ci.yml)). Tagging `v*` publishes attested builds per [SEP-55](https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0055.md) ([`release.yml`](.github/workflows/release.yml)).
 
 ## Design notes
 
