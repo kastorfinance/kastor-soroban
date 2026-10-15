@@ -1,5 +1,8 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
@@ -14,11 +17,27 @@ jobs:
         with:
           toolchain: "1.98.1"
           targets: wasm32v1-none
-          components: rustfmt, clippy
+          components: rustfmt, clippy, llvm-tools-preview
       - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
       - run: cargo fmt --all -- --check
       - run: cargo clippy --all-targets -- -D warnings
-      - run: cargo test
+      - name: Tests and coverage
+        run: |
+          cargo llvm-cov --workspace --ignore-filename-regex '/test\.rs' \
+            --lcov --output-path lcov.info --fail-under-lines 80
+          {
+            echo "### Coverage (lines)"
+            echo '```'
+            cargo llvm-cov report --ignore-filename-regex '/test\.rs' --summary-only
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcov
+          path: lcov.info
       - run: cargo build --target wasm32v1-none --release
       - name: wasm hashes
         run: sha256sum target/wasm32v1-none/release/*.wasm
