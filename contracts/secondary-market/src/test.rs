@@ -2,6 +2,7 @@
 extern crate std;
 
 use super::*;
+use dividends::{Dividends, DividendsClient};
 use kyc_registry::{KycRegistry, KycRegistryClient};
 use property_token::{PropertyToken, PropertyTokenClient};
 use soroban_sdk::{
@@ -385,4 +386,44 @@ fn listing_requires_the_seller_signature() {
         .market
         .try_list(&s.seller, &s.token.address, &1, &PRICE, &500)
         .is_err());
+}
+
+#[test]
+fn listed_units_keep_earning_rental_income() {
+    let s = setup();
+    let rent: i128 = 1_000 * 10_000_000; // 1,000 USDC
+
+    // The seller keeps 40 of the 100 units and lists 15 of them; the other
+    // 60 go to a second holder. Listed units stay in the seller's wallet.
+    s.token.transfer(&s.seller, &s.buyer, &60);
+    let id = s.list(15);
+
+    let operator = Address::generate(&s.env);
+    StellarAssetClient::new(&s.env, &s.usdc.address).mint(&operator, &rent);
+    let dividends_id = s.env.register(
+        Dividends,
+        (
+            operator.clone(),
+            s.usdc.address.clone(),
+            s.token.address.clone(),
+        ),
+    );
+    let dividends = DividendsClient::new(&s.env, &dividends_id);
+
+    let holders = vec![
+        &s.env,
+        s.seller.clone(),
+        s.buyer.clone(),
+        s.market.address.clone(),
+    ];
+    assert_eq!(dividends.allocate_pro_rata(&holders, &rent), rent);
+
+    // 40 of 100 units, the 15 listed included: 40 % of the rent.
+    assert_eq!(dividends.claim(&s.seller), rent * 40 / 100);
+    assert_eq!(s.usdc.balance(&s.seller), rent * 40 / 100);
+    assert_eq!(dividends.claimable(&s.buyer), rent * 60 / 100);
+    // The market holds no units, so it earns nothing.
+    assert_eq!(dividends.claimable(&s.market.address), 0);
+    assert_eq!(s.usdc.balance(&s.market.address), 0);
+    assert_eq!(s.market.listing(&id).unwrap().units, 15);
 }
