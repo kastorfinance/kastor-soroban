@@ -10,6 +10,7 @@ The table says what the assistant did in each area and who answers for the resul
 | Bugs in the Solidity contracts | Flagged the three issues in `docs/MIGRATION.md` while reading the original code | Carlos Serna, technical lead | 2026-10-15 |
 | `secondary-market` | Designed and wrote the contract and its 18 tests from the whitepaper's description of the secondary market; there was no Solidity version to port | Carlos Serna, technical lead: business rules (non-custodial design, capped fee, operator cancel) and code | 2026-10-15 |
 | Deploy script, CI, release workflow, documentation | Drafted | Carlos Serna, technical lead | 2026-10-15 |
+| `listed_units_keep_earning_rental_income` | Wrote the test | Stiven (stevenrome) | 2026-10-15 |
 
 All code is covered by tests that run in CI. Nothing in this repository has been audited.
 

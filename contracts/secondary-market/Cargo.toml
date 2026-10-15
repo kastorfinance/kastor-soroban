@@ -16,5 +16,6 @@ soroban-sdk = { workspace = true }
 
 [dev-dependencies]
 soroban-sdk = { workspace = true, features = ["testutils"] }
+dividends = { path = "../dividends" }
 kyc-registry = { path = "../kyc-registry" }
 property-token = { path = "../property-token" }
