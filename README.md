@@ -6,6 +6,16 @@ Kastor's production contracts are written in Solidity and were developed between
 
 > **Status:** testnet only. Not audited. Not yet used by real investors or real funds.
 
+## Production contracts on BNB Smart Chain
+
+The Solidity contracts this repository ports. Addresses from the deployment record of `kastor-smart-contracts` (chain 56):
+
+| Contract | Address |
+|---|---|
+| `KastorToken` (ERC-1155) | [`0xA1394D580b5DB91128658E146a30154Ab01dF4CA`](https://bscscan.com/address/0xA1394D580b5DB91128658E146a30154Ab01dF4CA) |
+| `WhitelistVault` | [`0x38C9253F08d7b8313F6b6e641Ff7B022a725c31C`](https://bscscan.com/address/0x38C9253F08d7b8313F6b6e641Ff7B022a725c31C) |
+| `KastorEscrowV1` | [`0x44A39895859f9e12e81f802fD3Ea5cd5aa97DA4a`](https://bscscan.com/address/0x44A39895859f9e12e81f802fD3Ea5cd5aa97DA4a) |
+
 ## Contracts
 
 | Contract | Replaces (BSC) | What it does |
