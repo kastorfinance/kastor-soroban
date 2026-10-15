@@ -44,22 +44,25 @@ flowchart LR
 
 ## Testnet deployment
 
-Deployed and exercised end to end on **2026-09-28** with [`scripts/deploy-testnet.sh`](scripts/deploy-testnet.sh). The ids and wasm hashes are in [`deployments/testnet.json`](deployments/testnet.json).
+Deployed and exercised end to end on **2026-10-15** with [`scripts/deploy-testnet.sh`](scripts/deploy-testnet.sh), from the attested [`v0.2.0` release](https://github.com/kastorfinance/kastor-soroban/releases) (SEP-55). The script checks each build attestation before deploying. Ids and wasm hashes are in [`deployments/testnet.json`](deployments/testnet.json).
 
 | Contract | Contract id |
 |---|---|
-| kyc-registry | [`CBRI2H3B…SRPLL`](https://stellar.expert/explorer/testnet/contract/CBRI2H3BIZSCFUWXUECTBE4SY7PZ74HCD7ISQR6QGANYFGACZDBSRPLL) |
-| property-token (KV01) | [`CBOYC65K…HGQNGO`](https://stellar.expert/explorer/testnet/contract/CBOYC65K67NWCNB52VJSYDFBRRF6FP2Z6FTSLSPSXUKC55ZOXSHGQNGO) |
-| primary-sale | [`CD575RI4…P637QYIA`](https://stellar.expert/explorer/testnet/contract/CD575RI4T4ZX5UQ334Z3FVYNOI32JAXTVQBWORE5CS5X3OXWP637QYIA) |
-| dividends | [`CAXWNRKX…XL32HNPW`](https://stellar.expert/explorer/testnet/contract/CAXWNRKX4EMWSOQLZWSWMGTIVSHZHTL7TLQVM3U2Y6YU45WWXL32HNPW) |
+| kyc-registry | [`CA6SOHYO…2PJJTPKS`](https://stellar.expert/explorer/testnet/contract/CA6SOHYO5DETMAAZ77DLHFXZZLVJ6N5ITKD4TOEZRWK3MWC52PJJTPKS) |
+| property-token (KV01) | [`CBEHZP76…LNZJDQD2`](https://stellar.expert/explorer/testnet/contract/CBEHZP76T5A4O7WZMPZIJ2C72CWLIVCLRFENBTGNLT4ZWG24LNZJDQD2) |
+| primary-sale | [`CAGA2AJR…FDDR4IG6H`](https://stellar.expert/explorer/testnet/contract/CAGA2AJRGDREG626YH23UNPZ2SOH2EFIDEQ2PPX4X7JDPZ2FDDR4IG6H) |
+| dividends | [`CA7KC5QP…OK2VY6RK`](https://stellar.expert/explorer/testnet/contract/CA7KC5QPQJVSBAMJT7TAHWAXIZXLYLCSQITIV23FRS75ZD72OK2VY6RK) |
+| secondary-market | [`CCOHCOAL…XHKAJTFD`](https://stellar.expert/explorer/testnet/contract/CCOHCOALRJ7CQKSHFW2X5GHNTCN5F6OVVYLU4WQLTHGY5GDKXHKAJTFD) |
 
-The demo uses `KUSD`, a test asset issued by the script, in place of USDC. Settlement and claim transactions from that run:
+The demo uses `KUSD`, a test asset issued by the script, in place of USDC. Transactions from that run:
 
-- Purchase settled (500 KUSD to the treasury, 10 KV01 to the investor): see the `primary-sale` contract history on Stellar Expert.
-- Rental income claimed (10 KUSD, 1 % of a 1,000 KUSD allocation): [`1b308993…`](https://stellar.expert/explorer/testnet/tx/1b3089936ac7c9eb52b65113db2f0997a5bb2c3dd031af3ffe6538e1d381ef0d)
+- Alice buys 10 KV01 (500 KUSD into escrow): [`154644ca…`](https://stellar.expert/explorer/testnet/tx/154644ca60e67f5edaf044a9e0d9bf3cc6b167b3c66a3a11a6f0842106715597)
+- Purchase settled (500 KUSD to the treasury, 10 KV01 to Alice): [`7e4aedfd…`](https://stellar.expert/explorer/testnet/tx/7e4aedfdb6f348773d5362d2978ed658f9b932f7b5be200eac4b0131f19e3f61)
+- Rental income claimed (10 KUSD, 1 % of a 1,000 KUSD allocation): [`bd0e07a0…`](https://stellar.expert/explorer/testnet/tx/bd0e07a00050764a630bebdb8b91f6ab9f71f2059ee8dceb360f5356e18ea8cd)
+- Secondary market: Alice lists 4 KV01 at 55 KUSD [`2529e4ad…`](https://stellar.expert/explorer/testnet/tx/2529e4ad783c49ba9e587a5acbbd94c57f93366b330703fa8f0ad4a19266eb96), Carol buys 2 [`58d09802…`](https://stellar.expert/explorer/testnet/tx/58d09802e04037a47c2fc1ae0064abb6cce6d672d8e12d3bc9fb670e1f4700a8)
 - Transfer of KV01 to a wallet without KYC: rejected with `Error(Contract, #7)` (`NotVerified`) during simulation.
 
-Testnet is reset periodically. After a reset, run the script again and the ids above change.
+Testnet is reset periodically. After a reset, run `RELEASE=v0.2.0 ./scripts/deploy-testnet.sh` again and the ids above change.
 
 ## Build and test
 
