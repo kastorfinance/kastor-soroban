@@ -352,43 +352,6 @@ fn invalid_purchase_amount_is_rejected() {
 }
 
 #[test]
-#[should_panic(expected = "Error(Contract, #11)")]
-fn constructor_rejects_a_fee_above_the_cap() {
-    let env = Env::default();
-    let a = Address::generate(&env);
-    env.register(
-        SecondaryMarket,
-        (Config {
-            admin: a.clone(),
-            registry: a.clone(),
-            usdc: a.clone(),
-            treasury: a,
-            fee_bps: MAX_FEE_BPS + 1,
-        },),
-    );
-}
-
-#[test]
-fn admin_functions_require_the_admin() {
-    let s = setup();
-    s.env.set_auths(&[]);
-    assert!(s.market.try_set_fee(&5).is_err());
-    assert!(s.market.try_set_paused(&true).is_err());
-    assert!(s.market.try_set_property(&s.token.address, &false).is_err());
-}
-
-#[test]
-fn listing_requires_the_seller_signature() {
-    let s = setup();
-    s.token.approve(&s.seller, &s.market.address, &1, &500);
-    s.env.set_auths(&[]);
-    assert!(s
-        .market
-        .try_list(&s.seller, &s.token.address, &1, &PRICE, &500)
-        .is_err());
-}
-
-#[test]
 fn listed_units_keep_earning_rental_income() {
     let s = setup();
     let rent: i128 = 1_000 * 10_000_000; // 1,000 USDC
@@ -426,4 +389,41 @@ fn listed_units_keep_earning_rental_income() {
     assert_eq!(dividends.claimable(&s.market.address), 0);
     assert_eq!(s.usdc.balance(&s.market.address), 0);
     assert_eq!(s.market.listing(&id).unwrap().units, 15);
+}
+
+#[test]
+#[should_panic(expected = "Error(Contract, #11)")]
+fn constructor_rejects_a_fee_above_the_cap() {
+    let env = Env::default();
+    let a = Address::generate(&env);
+    env.register(
+        SecondaryMarket,
+        (Config {
+            admin: a.clone(),
+            registry: a.clone(),
+            usdc: a.clone(),
+            treasury: a,
+            fee_bps: MAX_FEE_BPS + 1,
+        },),
+    );
+}
+
+#[test]
+fn admin_functions_require_the_admin() {
+    let s = setup();
+    s.env.set_auths(&[]);
+    assert!(s.market.try_set_fee(&5).is_err());
+    assert!(s.market.try_set_paused(&true).is_err());
+    assert!(s.market.try_set_property(&s.token.address, &false).is_err());
+}
+
+#[test]
+fn listing_requires_the_seller_signature() {
+    let s = setup();
+    s.token.approve(&s.seller, &s.market.address, &1, &500);
+    s.env.set_auths(&[]);
+    assert!(s
+        .market
+        .try_list(&s.seller, &s.token.address, &1, &PRICE, &500)
+        .is_err());
 }
